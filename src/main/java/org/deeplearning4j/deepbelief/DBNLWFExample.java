@@ -76,7 +76,7 @@ public class DBNLWFExample {
 
         log.info("Saved model");
 
-//        log.info("Evaluate model....");
+//        log.info("Evaluate model....");`
 //        dataIter = new LFWDataSetIterator(100,100);
 //        DataSet dataSet = dataIter.next();
 //        Evaluation eval = new Evaluation();

@@ -11,14 +11,6 @@ import java.io.ObjectInputStream;
 public class DBNLWFEval {
     private static ImageLoader loader = new ImageLoader(28, 28);
 
-    private static void x(INDArray features) {
-        INDArray columnMeans = features.mean(0);
-        INDArray columnStds = features.std(0);
-
-        features.subiRowVector(columnMeans);
-        features.diviRowVector(columnStds);
-    }
-
     private static int findMax(INDArray array) {
         double max = array.getDouble(0);
         int currMax = 0;
@@ -35,9 +27,8 @@ public class DBNLWFEval {
         ObjectInputStream ois = new ObjectInputStream(new FileInputStream("/Users/janmachacek/lfw/model2.ser"));
         MultiLayerNetwork model = (MultiLayerNetwork) ois.readObject();
 
-        File image = new File("/Users/janmachacek/lfw/Aaron_Peirsol/Aaron_Peirsol_0002.jpg");
+        File image = new File("/Users/janmachacek/lfw/Aaron_Eckhart/Aaron_Eckhart_0001.jpg");
         INDArray x = loader.asRowVector(image);
-        x(x);
         System.out.println(x);
         INDArray output = model.output(x);
         System.out.println(output);

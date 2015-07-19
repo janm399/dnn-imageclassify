@@ -1,8 +1,5 @@
 package org.deeplearning4j.deepbelief;
 
-
-import org.deeplearning4j.datasets.iterator.DataSetIterator;
-import org.deeplearning4j.datasets.iterator.impl.LFWDataSetIterator;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.layers.RBM;
@@ -11,41 +8,32 @@ import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.optimize.api.IterationListener;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
-import org.nd4j.linalg.dataset.DataSet;
+import org.deeplearning4j.util.ImageLoader;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collections;
 
-
-/**
- * Created by agibsonccc on 10/2/14.
- **/
 public class DBNLWFExample {
     private static Logger log = LoggerFactory.getLogger(DBNLWFExample.class);
 
-
     public static void main(String[] args) throws Exception {
-
-        int numSamples = 20;
-        int batchSize = 1;
-        int iterations = 5;
         int seed = 123;
         int rows = 28;
         int columns = 28;
-        int listenerFreq = iterations/5;
 
+        ImageLoader loader = new ImageLoader(rows, columns);
         log.info("Load data....");
-        DataSetIterator dataIter = new LFWDataSetIterator(batchSize,numSamples,rows,columns);
 
-        log.info("Build model....");
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
-                .layer(new RBM())
-                .nIn(dataIter.inputColumns())
-                .nOut(dataIter.totalOutcomes())
+                .layer(new RBM())           // a Restricted Boltzmann Machine
+                .nIn(rows * columns)        // the number of pixels on the input
+                .nOut(1)                    // the total number outcome classes: this is a binary classifier
                 .hiddenUnit(RBM.HiddenUnit.RECTIFIED)
                 .visibleUnit(RBM.VisibleUnit.GAUSSIAN)
                 .seed(seed)
@@ -55,36 +43,27 @@ public class DBNLWFExample {
                 .learningRate(1e-3)
                 .list(4)
                 .hiddenLayerSizes(600, 250, 200)
-                .override(3,new ClassifierOverride())
+                .override(3, new ClassifierOverride())
                 .build();
 
         MultiLayerNetwork model = new MultiLayerNetwork(conf);
         model.init();
-        model.setListeners(Collections.singletonList((IterationListener) new ScoreIterationListener(listenerFreq)));
+        // if DL4J's API were ``setListeners(List<? extends IterationListener> listeners)``,
+        // we could have lived without the typecast.
+        model.setListeners(Collections.singletonList((IterationListener) new ScoreIterationListener(1)));
 
-        log.info("Train model....");
-        while(dataIter.hasNext()) {
-            DataSet next = dataIter.next();
-            //next.normalizeZeroMeanZeroUnitVariance();
-            System.out.println(next.getFeatureMatrix());
-            System.out.println(next.getLabels());
-            model.fit(next);
-        }
+        // train the model on single input: this overfits the model, but is a starting point...
+        File image = new File("/Users/janmachacek/lfw/Aaron_Eckhart/Aaron_Eckhart_0001.jpg");
+        INDArray x = loader.asRowVector(image);
 
-        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("/Users/janmachacek/lfw/model2.ser"));
+        model.fit(x, new int[]{0});    // new int[] {0} is our only label with value 0 (the value can be any valid int)
+
+        // save the model
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("/Users/janmachacek/lfw/model-single.ser"));
         oos.writeObject(model);
         oos.close();
 
         log.info("Saved model");
-
-//        log.info("Evaluate model....");`
-//        dataIter = new LFWDataSetIterator(100,100);
-//        DataSet dataSet = dataIter.next();
-//        Evaluation eval = new Evaluation();
-//        INDArray output = model.output(dataSet.getFeatureMatrix());
-//        eval.eval(dataSet.getLabels(), output);
-//        log.info(eval.stats());
-
     }
 
 

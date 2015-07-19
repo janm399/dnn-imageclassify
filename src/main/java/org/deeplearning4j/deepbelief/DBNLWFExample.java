@@ -1,7 +1,6 @@
 package org.deeplearning4j.deepbelief;
 
 
-import org.deeplearning4j.datasets.fetchers.LFWDataFetcher;
 import org.deeplearning4j.datasets.iterator.DataSetIterator;
 import org.deeplearning4j.datasets.iterator.impl.LFWDataSetIterator;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
@@ -31,8 +30,8 @@ public class DBNLWFExample {
 
     public static void main(String[] args) throws Exception {
 
-        int numSamples = LFWDataFetcher.NUM_IMAGES;
-        int batchSize = 1000;
+        int numSamples = 20;
+        int batchSize = 1;
         int iterations = 5;
         int seed = 123;
         int rows = 28;
@@ -66,11 +65,13 @@ public class DBNLWFExample {
         log.info("Train model....");
         while(dataIter.hasNext()) {
             DataSet next = dataIter.next();
-            next.normalizeZeroMeanZeroUnitVariance();
+            //next.normalizeZeroMeanZeroUnitVariance();
+            System.out.println(next.getFeatureMatrix());
+            System.out.println(next.getLabels());
             model.fit(next);
         }
 
-        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("/Users/janmachacek/lfw/model.ser"));
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("/Users/janmachacek/lfw/model2.ser"));
         oos.writeObject(model);
         oos.close();
 

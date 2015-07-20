@@ -24,9 +24,9 @@ public class DBNLWFExample {
 
     public static void main(String[] args) throws Exception {
         int seed = 123;
-        int rows = 28;
-        int columns = 28;
-        int iterations = 100;
+        int rows = 10;
+        int columns = 10;
+        int iterations = 1000;
 
         ImageLoader loader = new ImageLoader(rows, columns);
         log.info("Load data....");

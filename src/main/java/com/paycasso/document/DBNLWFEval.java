@@ -10,7 +10,7 @@ import java.io.ObjectInputStream;
 import java.util.Arrays;
 
 public class DBNLWFEval {
-    private static ImageLoader loader = new ImageLoader(28, 28);
+    private static ImageLoader loader = new ImageLoader(10, 10);
 
     private static int findMax(INDArray array) {
         double max = array.getDouble(0);
@@ -27,6 +27,7 @@ public class DBNLWFEval {
     public static void main(String[] args) throws Exception {
         ObjectInputStream ois = new ObjectInputStream(new FileInputStream("model-single.ser"));
         MultiLayerNetwork model = (MultiLayerNetwork) ois.readObject();
+        model.init();
 
         File image = new File(DBNLWFExample.class.getResource("/images/blue.png").toURI());
         INDArray x = loader.asRowVector(image);

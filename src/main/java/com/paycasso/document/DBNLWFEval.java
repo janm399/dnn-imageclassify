@@ -25,10 +25,10 @@ public class DBNLWFEval {
     }
 
     public static void main(String[] args) throws Exception {
-        ObjectInputStream ois = new ObjectInputStream(new FileInputStream("/Users/janmachacek/lfw/model-single.ser"));
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream("model-single.ser"));
         MultiLayerNetwork model = (MultiLayerNetwork) ois.readObject();
 
-        File image = new File("/Users/janmachacek/lfw/Aaron_Eckhart/Aaron_Eckhart_0001.jpg");
+        File image = new File(DBNLWFExample.class.getResource("/images/blue.png").toURI());
         INDArray x = loader.asRowVector(image);
         model.init();
 

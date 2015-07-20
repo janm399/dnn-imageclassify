@@ -55,13 +55,13 @@ public class DBNLWFExample {
         model.setListeners(Collections.singletonList((IterationListener) new ScoreIterationListener(1)));
 
         // train the model on single input: this overfits the model, but is a starting point...
-        File image = new File("/Users/janmachacek/lfw/Aaron_Eckhart/Aaron_Eckhart_0001.jpg");
+        File image = new File(DBNLWFExample.class.getResource("/images/blue.png").toURI());
         INDArray x = loader.asRowVector(image);
 
         model.fit(x, new int[]{0});    // new int[] {0} is our only label with value 0 (the value can be any valid int)
 
         // save the model
-        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("/Users/janmachacek/lfw/model-single.ser"));
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("model-single.ser"));
         oos.writeObject(model);
         oos.close();
 

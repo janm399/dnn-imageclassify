@@ -1,4 +1,4 @@
-package org.deeplearning4j.deepbelief;
+package com.paycasso.document;
 
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
@@ -26,6 +26,7 @@ public class DBNLWFExample {
         int seed = 123;
         int rows = 28;
         int columns = 28;
+        int iterations = 100;
 
         ImageLoader loader = new ImageLoader(rows, columns);
         log.info("Load data....");
@@ -33,14 +34,15 @@ public class DBNLWFExample {
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
                 .layer(new RBM())           // a Restricted Boltzmann Machine
                 .nIn(rows * columns)        // the number of pixels on the input
-                .nOut(1)                    // the total number outcome classes: this is a binary classifier
+                .nOut(10)                   // the total number outcome classes
                 .hiddenUnit(RBM.HiddenUnit.RECTIFIED)
                 .visibleUnit(RBM.VisibleUnit.GAUSSIAN)
                 .seed(seed)
                 .weightInit(WeightInit.XAVIER)
                 .lossFunction(LossFunctions.LossFunction.RMSE_XENT)
                 .constrainGradientToUnitNorm(true)
-                .learningRate(1e-3)
+                .learningRate(1e-1)
+                .iterations(iterations)
                 .list(4)
                 .hiddenLayerSizes(600, 250, 200)
                 .override(3, new ClassifierOverride())

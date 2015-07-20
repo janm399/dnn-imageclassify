@@ -21,6 +21,7 @@
 *.swp
 *.lock
 *.iml
+*.ser
 
 pebble/build
 aa/build

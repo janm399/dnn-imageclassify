@@ -30,7 +30,6 @@ public class DBNLWFEval {
 
         File image = new File(DBNLWFExample.class.getResource("/images/blue.png").toURI());
         INDArray x = loader.asRowVector(image);
-        model.init();
 
         System.out.println(Arrays.toString(model.predict(x)));
         INDArray output = model.output(x);
